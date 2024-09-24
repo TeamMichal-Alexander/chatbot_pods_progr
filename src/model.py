@@ -35,7 +35,7 @@ class Model:
         self.client = chromadb.Client()
         self.collection = self.client.get_or_create_collection(name="docs")
         self.document = self._read_document()
-        self.database_filename = './content/plan_lekcji10.db'
+        self.database_filename = os.path.abspath(os.path.join(os.path.dirname(__file__), '../content/plan_lekcji10.db'))
         self.db_path = os.path.join(os.getcwd(), self.database_filename)
         self.db = SQLDatabase.from_uri(f"sqlite:///{self.db_path}")
         self._embedding_document()
@@ -128,3 +128,4 @@ class Model:
             answer = self.ask_sql(question)
         json_answer = {'answer': answer}
         return json_answer
+

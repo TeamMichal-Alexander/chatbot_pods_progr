@@ -19,7 +19,6 @@ def send_api_request(api_url, headers=None, data=None):
     try:
         response = requests.post(api_url, headers=headers, json=data)
         response.raise_for_status()
-        print(response.text)
         return response.json()
     except RequestException as e:
         print(f"Bląd: {e}")

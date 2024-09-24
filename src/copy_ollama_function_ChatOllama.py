@@ -21,6 +21,7 @@ from langchain_community.llms.ollama import OllamaEndpointNotFoundError, _Ollama
 from connect import send_api_request
 
 
+
 @deprecated("0.0.3", alternative="_chat_stream_response_to_chat_generation_chunk")
 def _stream_response_to_chat_generation_chunk(
     stream_response: str,
