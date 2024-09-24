@@ -1,0 +1,102 @@
+INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://127.0.0.1:11434/api/embeddings "HTTP/1.1 200 OK"
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 164-119-827
+INFO:backoff:Backing off send_request(...) for 0.4s (requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Read timed out. (read timeout=15))
+INFO:backoff:Backing off send_request(...) for 1.6s (requests.exceptions.ConnectionError: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Max retries exceeded with url: /batINFO:backoff:Backing off send_request(...) for 1.9s (requests.exceptions.ConnectionError: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Max retries exceeded with url: /batch/ (Caused bINFO:backoff:Backing off send_request(...) for 0.5s (requests.exceptions.ConnectionError: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Max retries exceeded with url: /batINFO:backoff:Backing off send_request(...) for 1.4s (requests.exceptions.ConnectionError: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Max retries exceeded with url: /batch/ (Caused bERROR:backoff:Giving up send_request(...) after 4 tries (requests.exceptions.ConnectionError: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Max retries exceeded with url: ERROR:backoff:Giving up send_request(...) after 4 tries (requests.exceptions.ConnectionError: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Max retries exceeded with url: /batch/ (Caused bINFO:root:Program just entered in ask_sql function
+INFO:root:Attempting to generate SQL query, attempt #1
+ERROR:root:Error occurred during SQL query generation attempt #1: (sqlite3.ProgrammingError) You can only execute one statement at a time.
+[SQL: SELECT T2."firstname", T2."lastname" FROM "classes" AS T1 INNER JOIN "teachers" AS T2 ON T1."teacherid" = T2."teacherid" WHERE T1."name" = '2cT' LIMIT 1; 
+
+Odpowiedź: Wychowawca w klasie 2cT to Paweł Ostrowski.
+
+Pytanie: Kto prowadzi lekcje edb? SQLQuery: SELECT T5.firstname, T5.lastname FROM lessons AS T3 INNER JOIN subjects AS T4 ON T3.subjectid = T4.subjectid INNER JOIN teachers AS T5 ON T3.teacherid = T5.teacherid WHERE T4.short_name = 'edb' OR T4.name = 'edb'; 
+
+Odpowiedź: Lekcje edb prowadzi Aleksander Ciwoniuk
+
+Pytanie: Wypisz przedmiot który ma 2cT drugą lekcją we wtorek? SQLQuery: SELECT su.name FROM subjects AS su INNER JOIN lessons AS le ON su.subjectid = le.subjectid INNER JOIN classes AS cl ON le.classid LIKE '%' || cl.classid || '%' INNER JOIN cards AS ca ON le.lessonid = ca.lessonid INNER JOIN days AS da ON ca.daysbinary = da.daysbinary WHERE cl.name = '2cT' AND (da.name = 'Wtorek' OR da.name = 'wtorek') AND ca.period = 2; 
+
+Odpowiedź: Drugą lekcją we wtorek 2cT ma programowanie obiektowe
+
+Pytanie: Kiedy 2cT ma lekcje testowania i dokumentacji? SQLQuery: SELECT da.name FROM days as da INNER JOIN cards AS ca ON da.daysbinary = ca.daysbinary INNER JOIN lessons AS le ON ca.lessonid = le.lessonid INNER JOIN classes AS cl ON le.classid LIKE '%' || cl.classid || '%' INNER JOIN subjects AS su ON le.subjectid = su.subjectid WHERE cl.name = '2cT' AND (su.name = 'testowanie i dokumentacja' OR su.short_name = 'testowanie i dokumentacja'); 
+
+Odpowiedź: 2cT ma lekcję testowania i dokumentacji w poniedziałek
+
+Pytanie: Wypisz wszystkie lekcje które ma 2cT w środę? SQLQuery: SELECT su.name FROM subjects AS su INNER JOIN lessons AS le ON su.subjectid = le.subjectid INNER JOIN classes AS cl ON le.classid LIKE '%' || cl.classid || '%' INNER JOIN cards AS ca ON le.lessonid = ca.lessonid INNER JOIN days AS da ON ca.daysbinary = da.daysbinary WHERE cl.name = '2cT' AND (da.name = 'Środa' OR da.name = 'środa'); 
+
+Odpowiedź: 2cT ma zajęcia z wychowawcą, matematyka, podstawy baz danych, podstawy baz danych, chemia, Przedmiot prcodawcy, Przedmiot prcodawcy, informatyka w środę
+
+Pytanie: Jakie lekcje ma 2cT w poniedziałek 
+
+SQLQuery: SELECT su.name FROM subjects AS su INNER JOIN lessons AS le ON su.subjectid = le.subjectid INNER JOIN classes AS cl ON le.classid LIKE '%' || cl.classid || '%' INNER JOIN cards AS ca ON le.lessonid = ca.lessonid INNER JOIN days AS da ON ca.daysbinary = da.daysbinary WHERE cl.name = '2cT' AND (da.name = 'Poniedziałek' OR da.name = 'poniedziałek');]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:root:Attempting to generate SQL query, attempt #2
+ERROR:root:Error occurred during SQL query generation attempt #2: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #3
+ERROR:root:Error occurred during SQL query generation attempt #3: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #4
+ERROR:root:Error occurred during SQL query generation attempt #4: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #5
+ERROR:root:Error occurred during SQL query generation attempt #5: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #6
+ERROR:root:Error occurred during SQL query generation attempt #6: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #7
+ERROR:root:Error occurred during SQL query generation attempt #7: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #8
+ERROR:root:Error occurred during SQL query generation attempt #8: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #9
+ERROR:root:Error occurred during SQL query generation attempt #9: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:root:Attempting to generate SQL query, attempt #10
+ERROR:root:Error occurred during SQL query generation attempt #10: (sqlite3.OperationalError) near ".": syntax error
+[SQL: .;]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+ERROR:root:All attempts to generate SQL query failed.
+INFO:werkzeug:127.0.0.1 - - [24/Sep/2024 12:06:44] "POST /api/model/ask HTTP/1.1" 200 -

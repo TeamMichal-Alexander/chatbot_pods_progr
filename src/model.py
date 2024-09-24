@@ -47,6 +47,7 @@ Pytanie: [{}]""")
 
         Jeśli w dwóch lub więcej tabelach występują kolumny o tych samych nazwach, należy jasno określić, do której tabeli odnosi się każda kolumna, używając aliasów tabel. To pomoże uniknąć błędów dwuznaczności.
         Jeśli w zapytaniu użytkownika wspomniany jest dzień tygodnia, model powinien uzyskać id tego dnia z tabeli days.
+        Kiedy połańczasz tablicy między sobą za pomocą lessons.classid zawsze korzystaj się z polecenia lessons.classid LIKE '%' || table_name.column_name || '%'
         Przykład struktury bazy danych:
 
         Tabela periods:
@@ -89,9 +90,9 @@ Pytanie: [{}]""")
         Przykłady: 
         Pytanie: "Jakiego wychowawcę ma 2cT?" SQLQuery: SELECT T2."firstname", T2."lastname" FROM "classes" AS T1 INNER JOIN "teachers" AS T2 ON T1."teacherid" = T2."teacherid" WHERE T1."name" = '2cT' LIMIT 1; SQLResult: Paweł|Ostrowski Odpowiedź: Wychowawca w klasie 2cT to Paweł Ostrowski.
         Pytanie: Kto prowadzi lekcji edb? SQLQuery: SELECT T5.firstname, T5.lastname FROM lessons AS T3 INNER JOIN subjects AS T4 ON T3.subjectid = T4.subjectid INNER JOIN teachers AS T5 ON T3.teacherid = T5.teacherid WHERE T4.short_name = 'edb' OR T4.name = 'edb'; SQLResult: Aleksander|Ciwoniuk Odpowiedź: Lekcje edb prowadzi Aleksander Ciwoniuk
-        Pytanie: Wypisz przedmiot który ma 2cT drugą lekcją we wtorek? SQLQuery: SELECT su.name FROM subjects AS su INNER JOIN lessons AS le ON su.subjectid = le.subjectid INNER JOIN classes AS cl ON le.classid = cl.classid INNER JOIN cards AS ca ON le.lessonid = ca.lessonid INNER JOIN days AS da ON ca.daysbinary = da.daysbinary WHERE cl.name = '2cT' AND (da.name = 'Wtorek' OR da.name = 'wtorek') AND ca.period = 2; SQLResult: programowanie obiektowe Answer: Drugą lekcją we wtorek 2cT ma programowanie obiektowe
-        Pytanie: Kiedy 2cT ma lekcje testowania i dokumentacji? SQLQuery:  SELECT da.name FROM days as da INNER JOIN cards AS ca ON da.daysbinary = ca.daysbinary INNER JOIN lessons AS le ON ca.lessonid = le.lessonid INNER JOIN classes AS cl ON le.classid = cl.classid INNER JOIN subjects AS su ON le.subjectid = su.subjectid WHERE cl.name = '2cT' AND (su.name = 'testowanie i dokumentacja' OR su.short_name = 'testowanie i dokumentacja'); SQLResult: Poniedziałek Answer: 2cT ma lekcję testowania i dokumentacji w poniedziałek
-        Pytanie: Wypisz wszystkie lekcje które ma 2cT w środę? SQLQuery: SELECT su.name FROM subjects AS su INNER JOIN lessons AS le ON su.subjectid = le.subjectid INNER JOIN classes AS cl ON le.classid = cl.classid INNER JOIN cards AS ca ON le.lessonid = ca.lessonid INNER JOIN days AS da ON ca.daysbinary = da.daysbinary WHERE cl.name = '2cT' AND (da.name = 'Środa' OR da.name = 'środa'); SQLResult zajęcia z wychowawcą, matematyka, podstawy baz danych, podstawy baz danych, chemia, Przedmiot prcodawcy, Przedmiot prcodawcy, informatyka Answer: 2cT ma zajęcia z wychowawcą, matematyka, podstawy baz danych, podstawy baz danych, chemia, Przedmiot prcodawcy, Przedmiot prcodawcy, informatyka w środę
+        Pytanie: Wypisz przedmiot który ma 2cT drugą lekcją we wtorek? SQLQuery: SELECT su.name FROM subjects AS su INNER JOIN lessons AS le ON su.subjectid = le.subjectid INNER JOIN classes AS cl ON le.classid LIKE '%' || cl.classid || '%' INNER JOIN cards AS ca ON le.lessonid = ca.lessonid INNER JOIN days AS da ON ca.daysbinary = da.daysbinary WHERE cl.name = '2cT' AND (da.name = 'Wtorek' OR da.name = 'wtorek') AND ca.period = 2; SQLResult: programowanie obiektowe Answer: Drugą lekcją we wtorek 2cT ma programowanie obiektowe
+        Pytanie: Kiedy 2cT ma lekcje testowania i dokumentacji? SQLQuery:  SELECT da.name FROM days as da INNER JOIN cards AS ca ON da.daysbinary = ca.daysbinary INNER JOIN lessons AS le ON ca.lessonid = le.lessonid INNER JOIN classes AS cl ON le.classid LIKE '%' || cl.classid || '%' INNER JOIN subjects AS su ON le.subjectid = su.subjectid WHERE cl.name = '2cT' AND (su.name = 'testowanie i dokumentacja' OR su.short_name = 'testowanie i dokumentacja'); SQLResult: Poniedziałek Answer: 2cT ma lekcję testowania i dokumentacji w poniedziałek
+        Pytanie: Wypisz wszystkie lekcje które ma 2cT w środę? SQLQuery: SELECT su.name FROM subjects AS su INNER JOIN lessons AS le ON su.subjectid = le.subjectid INNER JOIN classes AS cl ON le.classid LIKE '%' || cl.classid || '%' INNER JOIN cards AS ca ON le.lessonid = ca.lessonid INNER JOIN days AS da ON ca.daysbinary = da.daysbinary WHERE cl.name = '2cT' AND (da.name = 'Środa' OR da.name = 'środa'); SQLResult zajęcia z wychowawcą, matematyka, podstawy baz danych, podstawy baz danych, chemia, Przedmiot prcodawcy, Przedmiot prcodawcy, informatyka Answer: 2cT ma zajęcia z wychowawcą, matematyka, podstawy baz danych, podstawy baz danych, chemia, Przedmiot prcodawcy, Przedmiot prcodawcy, informatyka w środę
 
         Pytanie: {}
         """
@@ -147,7 +148,7 @@ Pytanie: [{}]""")
         error = 0
         print(1)
         response = None
-        for i in range(10):
+        for i in range(20):
             response = self.chain.invoke({"question": self.prompt_to_codellama.format(question)})
             try:
                 print(i)
@@ -164,11 +165,12 @@ Pytanie: [{}]""")
             print(db_context)
             print(db_answer)
             human_qry_template = """Zostaje Ci zadane pytanie: „{question}”.
-Otrzymujesz także następujące dane z bazy danych: „{result}”.
-Korzystając wyłącznie z tych danych, które podałem, krótko i precyzyjnie, ale informatywnie odpowiedz na pytanie. Nie dodawaj nic zbędnego i nie udzielaj wyjaśnień — odpowiadaj tylko na temat. Przy przeliczeniu w celu rozdzielenia wykorzystuj przycinek. 
-"""
-            print(human_qry_template.format(question=question, result=db_answer))
-            response = ask_ollama_server(prompt=human_qry_template.format(question=question, result=db_answer), model=self.model)
+        Też masz zapytanie do bazy danych sql: {request_to_sql}.
+        Otrzymujesz także następujące dane z bazy danych, które są zawierają w sobie odpowiedź na pytanie: „{result}”.
+        Korzystając wyłącznie z tych danych, które podałem, krótko i precyzyjnie, ale informatywnie odpowiedz na pytanie. Nie dodawaj nic zbędnego i nie udzielaj wyjaśnień — odpowiadaj tylko na temat. Przy przeliczeniu w celu rozdzielenia wykorzystuj przycinek. 
+        """
+            print(human_qry_template.format(question=question, result=db_answer, request_to_sql=db_context))
+            response = ask_ollama_server(prompt=human_qry_template.format(question=question, result=db_answer, request_to_sql=db_context), model=self.model)
             return response['response']
         else:
             return 'Niestety nie udało się znaleść jakiejkolwiek informacji, sprobójcie przeformulować prompt lub zapytajcie o czymś innym'
