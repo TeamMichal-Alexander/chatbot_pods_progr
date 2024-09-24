@@ -6,19 +6,14 @@ import pdfplumber
 
 from langchain_community.utilities import SQLDatabase
 from langchain.chains import create_sql_query_chain
-from langchain_experimental.llms.anthropic_functions import prompt
 
 from connect import ask_ollama_server
 from templates.prompts import final_prompt_sql_template, prompt_to_sql_database_template, final_prompt_with_pdf_template
 
 import os
 
-class I:
-    def __init__(self):
-        pass
-
 class Model:
-    def __init__(self, pdf_path: str, working_with_ollama_server=True):
+    def __init__(self, pdf_path: str, working_with_ollama_server):
         self.logger = logging.getLogger(__name__)
         self.working_with_ollama_server = working_with_ollama_server
         logging.basicConfig(filename='py_log.log', encoding='utf-8', level=logging.DEBUG)
@@ -78,7 +73,6 @@ class Model:
             query_embeddings=[response["embedding"]],
             n_results=2)
 
-        self.logger.info(results['documents'])
         data = "\n".join([doc[0] for doc in results['documents']])
 
         output = self.ollama_generate(
@@ -110,7 +104,6 @@ class Model:
             db_answer = self.db.run(db_context)
             self.logger.info(db_context)
             self.logger.info(db_answer)
-            self.logger.info(final_prompt_sql_template.format(question=question, result=db_answer, request_to_sql=db_context))
             if self.working_with_ollama_server:
                 response = self.ollama_generate(prompt=final_prompt_sql_template.format(question=question, result=db_answer, request_to_sql=db_context), model=self.model)
             else:
