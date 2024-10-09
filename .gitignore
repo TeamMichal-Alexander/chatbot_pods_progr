@@ -1,4 +1,7 @@
 /.idea
 .env
 /expirement
-py_log.log
+*.log
+/content
+*.pkl
+*.pdf

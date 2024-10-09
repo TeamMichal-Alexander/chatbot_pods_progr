@@ -64,6 +64,146 @@ prompt_to_sql_database_template = """Jesteś modelem AI, którego zadaniem jest 
                 Pytanie: {}
                 """
 
-final_prompt_with_pdf_template = ("""Jesteś botem Q&A, ode mnie otrzymasz fragmenty tekstu z planu nauki języka polskiego w szkole ponadpodstawowej, ten plan jest dokładny. Otrzymasz również pytanie, na które musisz odpowiedzieć, opierając się na fragmentach tekstu. Twoja odpowiedź powinna być dokładna, bez zbędnych informacji, ale informatywna i rozszerzona. Ponadto, jeśli to konieczne, możesz zacytować części tekstu w swojej odpowiedzi. Jeśli nie znasz odpowiedzi, poproś o przekształcenie pytania. 
+final_prompt_with_pdf_template = ("""Jesteś botem Q&A, ode mnie otrzymasz fragmenty tekstu z planu nauki języka polskiego w szkole ponadpodstawowej, ten plan jest dokładny. Otrzymasz również pytanie, na które musisz odpowiedzieć, opierając się na fragmentach tekstu, ale niektóre fragmenty tekstu mogą nie pasować do pytania lub zawierac kompletnie inną informację. Możesz korzystać się z kilku fragmentów dla swojej odpowiedzi. Fragmenty tekstu będą rozdzielony dwoma Enter'ami lub \n\n. Niektóre fragmenty mogą zawierać podszebną informację, ale jeszcze niepodszebną, dlatego możesz jeżeli takie fragmenty będą podane, znaleść w nich podszebną informacę i skorzystać się z niej. Twoja odpowiedź powinna być dokładna, informatywna i rozszerzona. Ponadto, jeśli to konieczne, możesz zacytować części tekstu w swojej odpowiedzi. 
         Oto fragmenty tekstu: [{}]
         Pytanie: [{}]""")
+
+
+prompt_to_model_for_chunking_text_template = """Zadanie:
+
+Podziel tekst na fragmenty o długości około 100-150 słów. Jeżeli w tekście pojawia się lista, znajdź nagłówek nad nią i zwróć listę w formacie: || Nagłówek :: Lista ||. Jeśli nie ma nagłówka, zwróć listę w formacie || Bez nagłówka :: Lista ||. Nagłówek to tekst, który znajduje się bezpośrednio przed listą i może być oddzielony jako osobna linia lub kończyć się dwukropkiem.
+
+Przykład działania:
+
+Tekst wejściowy:
+
+Rano:
+Obudzić się.
+Zrobić ćwiczenia.
+Zjeść śniadanie.
+Plany na dzień:
+Iść do sklepu.
+Zakończyć projekt.
+Zorganizować spotkanie.
+Praca nad projektem idzie zgodnie z planem, ale ważne jest, aby pamiętać o kilku kluczowych punktach:
+
+Wyznaczać cele na tydzień.
+Robić codzienne raporty.
+Analizować postępy.
+Oczekiwany rezultat:
+
+|| Rano :: - Obudzić się.
+
+Zrobić ćwiczenia.
+Zjeść śniadanie. ||
+|| Plany na dzień :: - Iść do sklepu.
+
+Zakończyć projekt.
+Zorganizować spotkanie. ||
+Praca nad projektem idzie zgodnie z planem, ale ważne jest, aby pamiętać o kilku kluczowych punktach:
+
+|| Bez nagłówka :: - Wyznaczać cele na tydzień.
+
+Robić codzienne raporty.
+Analizować postępy. ||
+Twój tekst:
+
+{}"""
+
+prompt_to_generate_shorter_text_for_embedding_template = """Wygeneruj opis tekstu, który zostanie użyty do tworzenia osadzania (embedding) i Retrieval-Augmented Generation (RAG). Opis powinien mieć do 50 znaków i zawierać kluczowe słowa, które występują w tekście. Te słowa kluczowe powinny oddawać istotę treści i pomagać w skutecznym odnalezieniu tekstu na podstawie odpowiednich zapytań. Twoim celem jest zapewnienie maksymalnie precyzyjnego wydobycia tekstu na podstawie tych słów. Jeżeli w tekscie się spotyka lista, to opis obowiązkowo powinien zawierac nagłówek tej listy. Odpowiedź powinna wyglądać w następny sposób:'
+To jest opis twojego tekstu: 
+"tutaj opis"
+'. 
+
+Przykład 1: '
+Tekst: Treści nauczania – wymagania szczegółowe
+Na III etapie edukacyjnym obowiązuje utrwalanie, poszerzanie i doskonalenie wiadomości
+i umiejętności nabytych w szkole podstawowej.
+ZAKRES PODSTAWOWY ZAKRES ROZSZERZONY
+I. Kształcenie literackie i kulturowe.
+1. Czytanie utworów literackich. Uczeń:
+1) rozumie podstawy periodyzacji
+literatury, sytuuje utwory literackie
+w poszczególnych okresach:
+starożytność, średniowiecze, renesans,
+barok, oświecenie, romantyzm,
+pozytywizm, Młoda Polska,
+dwudziestolecie międzywojenne,
+literatura wojny i okupacji, literatura lat
+1945–1989 krajowa i emigracyjna,
+literatura po 1989 r.;
+2) rozpoznaje konwencje literackie
+i określa ich cechy w utworach
+(fantastyczną, symboliczną,
+mimetyczną, realistyczną,
+naturalistyczną, groteskową);
+3) rozróżnia gatunki epickie, liryczne,
+dramatyczne i synkretyczne, w tym:
+gatunki poznane w szkole podstawowej
+oraz epos, odę, tragedię antyczną,
+psalm, kronikę, satyrę, sielankę, balladę,
+dramat romantyczny, powieść poetycką,
+a także odmiany powieści i dramatu,
+wymienia ich podstawowe cechy
+gatunkowe;
+4) rozpoznaje w tekście literackim środki
+wyrazu artystycznego poznane w szkole
+podstawowej oraz środki znaczeniowe:
+oksymoron, peryfrazę, eufonię,
+hiperbolę; leksykalne, w tym
+frazeologizmy; składniowe: antytezę,
+paralelizm, wyliczenie, epiforę, elipsę;
+wersyfikacyjne, w tym przerzutnię;
+
+To jest opis twojego tekstu: 
+"Treści nauczania, wymagania szczegółowe, III etap edukacyjny, zakres podstawowy, zakres rozszerzony"
+'
+
+Przykład 2: '
+Tekst: Szkoła  ponadpodstawowa  — język  polski   
+25 sporządza bazę danych;  
+11)  korzysta z zasobów multimedialnych, 
+np. z:  bibliotek, słowników on- line, 
+wydawnictw e -book, autorskich stron 
+internetowych; dokonuje wyboru źródeł 
+internetowych, uwzględniając kryterium 
+poprawności rzeczowej oraz krytycznie 
+ocenia ich zawartość;  
+12)  wykorzystuje formę projektu 
+w przygotowaniu i prezentowaniu oraz 
+popularyzowaniu swoich zainteresowań 
+i osiągnięć;  
+13) zna pojęcie hipertekstu; rozpoznaje jego realizacje internetowe oraz pozainternetowe; określa ich funkcje w komunikacji, umiejętnie z nich 
+korzysta w gromadzeniu informacji.  
+ 
+ 
+Lektura obowiązkowa  
+ZAKRES PODSTAWOWY  ZAKRES ROZSZERZONY  
+1) Biblia , w tym fragmenty Księgi Rodzaju, Księgi 
+Hioba, Księgi Koheleta, Pieśni nad Pieśniami, 
+Księgi Psalmów , Apokalipsy wg św. Jana;  
+2) Jan Parandowski, Mitologia, część I Grecja ; 
+3) Homer, Iliada (fragmenty), Odyseja 
+(fragmenty);  
+4) Sofokles, Antygona;  
+5) Horacy  – wybrane utwory;  
+6) Bogurodzica; Lament świętokrzys ki 
+(fragmenty); Legenda o  św. Aleksym 
+(fragmenty); Rozmowa Mistrza Polikarpa ze 
+Śmiercią  (fragmenty);  
+7) Kwiatki świętego Franciszka z Asyżu 
+(fragmenty);  
+8) Pieśń o Rolandzie (fragmenty);  
+9) Gall Anonim, Kronika polska (fragmenty);  
+10) Dante Alighieri, Boska komedia (fragmenty);  
+11) Jan Kochanowski, wybrane pieśni, w tym: 
+Pieśń IX ks. I, Pieśń V ks. '
+
+To jest opis twojego tekstu: 
+"Szkoła  ponadpodstawowa , 25 sporządza bazę danych , lista lektur obowiązkowych , zakres podstawowy , zakres rozszerzony"
+'
+
+
+Tekst, który powinieneś opisać: 
+{}
+"""
