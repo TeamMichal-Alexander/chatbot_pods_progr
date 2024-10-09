@@ -149,11 +149,11 @@ class Model:
 
         embedding_vector = ollama.embeddings(model=self.model_embedding, prompt=question)["embedding"]
         matched_docs = self.db_faiss.similarity_search_by_vector(embedding_vector, k=12)
-        print(self.collection.query(query_texts=[question], n_results=10))
+        matched_docs = self.collection.query(query_texts=[question], n_results=10)['documents'][0]
 
         # print(matched_docs)
         print(len(matched_docs))
-        matched_docs = [self.dict_of_chunks[i.page_content] for i in matched_docs]
+        # matched_docs = [self.dict_of_chunks[i.page_content] for i in matched_docs]
         matched_docs = [f'{i} fragment tekstu: ' + text for i, text in enumerate(matched_docs)]
         matched_docs = "\n\n".join(matched_docs)
         print(matched_docs)
