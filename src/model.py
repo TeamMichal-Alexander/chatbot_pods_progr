@@ -85,8 +85,9 @@ class Model:
             loaded_list = pickle.load(f)
             answer = []
             _ = [answer.append(i) if len(i) > 0 else None for i in loaded_list]
-            for i, text in enumerate(answer):
-                self.collection.add(documents=text, ids=[f'{i}_id'])
+            # for i, text in enumerate(answer):
+            #     self.collection.add(documents=text, ids=[f'{i}_id'])
+            print(0)
             return answer
 
 
@@ -101,6 +102,7 @@ class Model:
 
     def _embedding_document(self):
         try:
+            print(1)
             self.db_faiss = FAISS.load_local(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', self.faiss_path)), OllamaEmbeddings(model='llama3.1'), allow_dangerous_deserialization=True, )
             keys = [i.page_content for i in self.db_faiss.docstore._dict.values()]
             if len(keys) != len(self.document):
@@ -109,6 +111,7 @@ class Model:
                 self.dict_of_chunks[key] = value
             print('all')
         except Exception as e:
+            print(e)
             self.logger.warning(f"{e} in _embedding_document function")
             counter = 0
             dict_of_chunks = self.generate_description_for_embedding(self.document)
