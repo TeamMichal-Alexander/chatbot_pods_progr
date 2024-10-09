@@ -3,6 +3,9 @@ from fileinput import filename
 from os.path import exists
 
 import ollama
+from importlib_metadata import metadata
+from ollama import embeddings
+
 import chromadb
 import chromadb.utils.embedding_functions as embedding_functions
 import pdfplumber
@@ -31,7 +34,7 @@ class Model:
         self.pdf_path = pdf_path
         self.dict_of_chunks = {}
         self.model_embedding = "mxbai-embed-large"
-        self.model = "llama3.1"
+        self.model = "qwen2:7b"
         self.pkl_file = 'jezyk-polski.pkl'
         self.faiss_path = 'content/faiss'
         if self.working_with_ollama_server:
@@ -47,7 +50,7 @@ class Model:
             url="http://localhost:11434/api/embeddings",
             model_name=self.model_embedding,
         )
-        self.collection = self.client.get_or_create_collection(name="docs", embedding_function=self.ollama_embedding_for_chromadb)
+        self.collection = self.client.get_or_create_collection(name="docs", embedding_function=self.ollama_embedding_for_chromadb, metadata={"hnsw:space": "cosine"})
         self.document = self._read_document()
         self.database_filename = os.path.abspath(os.path.join(os.path.dirname(__file__), '../content/plan_lekcji10.db'))
         self.db_path = os.path.join(os.getcwd(), self.database_filename)
@@ -85,9 +88,11 @@ class Model:
             loaded_list = pickle.load(f)
             answer = []
             _ = [answer.append(i) if len(i) > 0 else None for i in loaded_list]
-            # for i, text in enumerate(answer):
-            #     self.collection.add(documents=text, ids=[f'{i}_id'])
-            print(0)
+            # descriptions = self.generate_description_for_embedding(answer)
+            # for i, descr in enumerate(descriptions):
+            #     embedding = ollama.embeddings(model=self.model_embedding, prompt=descriptions[descr])["embedding"]
+            #     self.collection.update(documents=descr, ids=[f'{i}_id'], embeddings=[embedding], metadatas=[{"full_document": descriptions[descr]}])
+            # print(0)
             return answer
 
 
@@ -97,21 +102,23 @@ class Model:
             key = self.ollama_generate(model=self.model, prompt=prompt_to_generate_shorter_text_for_embedding_template.format(text))['response']
             key = key[key.find('"')+1:key.rfind('"')]
             dictionary_of_chunks[key] = text
+            print(i, key)
         return dictionary_of_chunks
 
 
     def _embedding_document(self):
         try:
-            print(1)
-            self.db_faiss = FAISS.load_local(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', self.faiss_path)), OllamaEmbeddings(model='llama3.1'), allow_dangerous_deserialization=True, )
-            keys = [i.page_content for i in self.db_faiss.docstore._dict.values()]
-            if len(keys) != len(self.document):
+            data = self.collection.get()
+            print(data)
+            keys, values = data['documents'], list([i['full_document'] for i in data['metadatas']])
+            print(len(keys), len(values))
+            if len(keys) != len(values):
                 raise 'len of description not equal len of document'
-            for key, value in zip(keys, self.document):
+            for key, value in zip(keys, values):
                 self.dict_of_chunks[key] = value
             print('all')
         except Exception as e:
-            print(e)
+            raise e
             self.logger.warning(f"{e} in _embedding_document function")
             counter = 0
             dict_of_chunks = self.generate_description_for_embedding(self.document)
@@ -138,30 +145,18 @@ class Model:
 
 
     def ask_pdf(self, question: str) -> str:
-        # response = ollama.embeddings(
-        #     prompt=question,
-        #     model=self.model_embedding)
-        # print(response)
-
-        # results = self.collection.query(
-        #     query_embeddings=[response["embedding"]],
-        #     n_results=10)
-
-        embedding_vector = ollama.embeddings(model=self.model_embedding, prompt=question)["embedding"]
-        matched_docs = self.db_faiss.similarity_search_by_vector(embedding_vector, k=12)
-        matched_docs = self.collection.query(query_texts=[question], n_results=10)['documents'][0]
-
-        # print(matched_docs)
-        print(len(matched_docs))
-        # matched_docs = [self.dict_of_chunks[i.page_content] for i in matched_docs]
-        matched_docs = [f'{i} fragment tekstu: ' + text for i, text in enumerate(matched_docs)]
+        embedding_of_question = ollama.embeddings(model=self.model_embedding, prompt=question)["embedding"]
+        matched_docs = self.collection.query(query_embeddings=[embedding_of_question], n_results=5)
+        print(matched_docs)
+        print(matched_docs['documents'])
+        matched_docs = [i['full_document'] for i in matched_docs['metadatas'][0]]
+        matched_docs = [f'{i+1} fragment tekstu: ' + text for i, text in enumerate(matched_docs)]
         matched_docs = "\n\n".join(matched_docs)
         print(matched_docs)
         output = self.ollama_generate(
             model=self.model,
             prompt=final_prompt_with_pdf_template.format(matched_docs, question)
         )
-
         return output['response']
 
 
