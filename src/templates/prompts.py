@@ -110,7 +110,7 @@ Twój tekst:
 
 {}"""
 
-prompt_to_generate_shorter_text_for_embedding_template = """Wygeneruj opis tekstu, który zostanie użyty do tworzenia osadzania (embedding) i Retrieval-Augmented Generation (RAG). Opis powinien mieć do 50 znaków i zawierać kluczowe słowa, które występują w tekście. Te słowa kluczowe powinny oddawać istotę treści i pomagać w skutecznym odnalezieniu tekstu na podstawie odpowiednich zapytań. Twoim celem jest zapewnienie maksymalnie precyzyjnego wydobycia tekstu na podstawie tych słów. Jeżeli w tekscie się spotyka lista, to opis obowiązkowo powinien zawierac nagłówek tej listy. Odpowiedź powinna wyglądać w następny sposób:'
+prompt_to_generate_shorter_text_for_embedding_template = """Wygeneruj opis tekstu, który zostanie użyty do tworzenia osadzania (embedding) i Retrieval-Augmented Generation (RAG). Opis powinien mieć do 50 znaków i zawierać kluczowe słowa, które występują w tekście. Te słowa kluczowe powinny oddawać istotę treści i pomagać w skutecznym odnalezieniu tekstu na podstawie odpowiednich zapytań. Twoim celem jest zapewnienie maksymalnie precyzyjnego wydobycia tekstu na podstawie tych słów. Jeżeli w tekscie się spotyka lista, to opis obowiązkowo powinien zawierac nagłówek tej listy. Rozdielaj frazy lub słowa kluczowe przecinkiem. Odpowiedź powinna wyglądać w następny sposób:'
 To jest opis twojego tekstu: 
 "tutaj opis"
 '. 

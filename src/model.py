@@ -34,7 +34,7 @@ class Model:
         self.pdf_path = pdf_path
         self.dict_of_chunks = {}
         self.model_embedding = "mxbai-embed-large"
-        self.model = "qwen2:7b"
+        self.model = "llama3.1"
         self.pkl_file = 'jezyk-polski.pkl'
         self.faiss_path = 'content/faiss'
         if self.working_with_ollama_server:
@@ -74,25 +74,16 @@ class Model:
 
 
     def _read_document(self):
-        # text = ""
-        # with pdfplumber.open(self.pdf_path) as pdf:
-        #     for page in pdf.pages:
-        #         text += page.extract_text() + "\n"
-        # document = text.split('---')
-        # for i in text.split('___'):
-        #     document.append(i)
-        # return document
         if not exists(self.pkl_file):
             self.make_chunking()
         with open(self.pkl_file, 'rb') as f:
             loaded_list = pickle.load(f)
             answer = []
             _ = [answer.append(i) if len(i) > 0 else None for i in loaded_list]
-            # descriptions = self.generate_description_for_embedding(answer)
-            # for i, descr in enumerate(descriptions):
-            #     embedding = ollama.embeddings(model=self.model_embedding, prompt=descriptions[descr])["embedding"]
-            #     self.collection.update(documents=descr, ids=[f'{i}_id'], embeddings=[embedding], metadatas=[{"full_document": descriptions[descr]}])
-            # print(0)
+            descriptions = self.generate_description_for_embedding(answer)
+            for i, descr in enumerate(descriptions):
+                embedding = ollama.embeddings(model=self.model_embedding, prompt=descriptions[descr])["embedding"]
+                self.collection.update(documents=descr, ids=[f'{i}_id'], embeddings=[embedding], metadatas=[{"full_document": descriptions[descr]}])
             return answer
 
 
@@ -102,7 +93,6 @@ class Model:
             key = self.ollama_generate(model=self.model, prompt=prompt_to_generate_shorter_text_for_embedding_template.format(text))['response']
             key = key[key.find('"')+1:key.rfind('"')]
             dictionary_of_chunks[key] = text
-            print(i, key)
         return dictionary_of_chunks
 
 
@@ -118,26 +108,24 @@ class Model:
                 self.dict_of_chunks[key] = value
             print('all')
         except Exception as e:
-            raise e
-            self.logger.warning(f"{e} in _embedding_document function")
-            counter = 0
-            dict_of_chunks = self.generate_description_for_embedding(self.document)
-            self.dict_of_chunks = dict_of_chunks
-            self.db_faiss = FAISS.from_texts(
-                list(dict_of_chunks.keys()),
-                OllamaEmbeddings(model=self.model_embedding)
-            )
-            self.db_faiss.save_local(self.faiss_path, 'index')
-            for i, d in enumerate(dict_of_chunks.keys()):
-                counter += 1
-                response = ollama.embeddings(model=self.model_embedding, prompt=d)
-                embedding = response["embedding"]
-                self.list_of_embeded_document.append(embedding)
-                self.collection.add(
-                    ids=[str(i)],
-                    embeddings=[embedding],
-                    documents=[d])
-
+            with open(self.pkl_file, 'rb') as f:
+                loaded_list = pickle.load(f)
+                answer = []
+                _ = [answer.append(i) if len(i) > 0 else None for i in loaded_list]
+                descriptions = self.generate_description_for_embedding(answer)
+                for i, descr in enumerate(descriptions):
+                    embedding = ollama.embeddings(model=self.model_embedding, prompt=descriptions[descr])["embedding"]
+                    self.collection.update(documents=descr, ids=[f'{i}_id'], embeddings=[embedding],
+                                           metadatas=[{"full_document": descriptions[descr]}])
+                data = self.collection.get()
+                print(data)
+                keys, values = data['documents'], list([i['full_document'] for i in data['metadatas']])
+                print(len(keys), len(values))
+                if len(keys) != len(values):
+                    raise 'len of description not equal len of document'
+                for key, value in zip(keys, values):
+                    self.dict_of_chunks[key] = value
+                print('all')
 
     def collection_is_empty(self):
         all_data = self.collection.peek(limit=1)
